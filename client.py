@@ -1,24 +1,20 @@
 import asyncio
 import websockets
 import json
+import time
 
 async def test():
 
-    async with websockets.connect('ws://127.0.0.1:8767') as websocket:
+    async with websockets.connect('ws://127.0.0.1:8765') as websocket:
 
-        name = ''
+        msg = {'autn': str(time.time()),
+        'name': 'Igor', 'pasw':'1111','nick':'Igor_sam'}
+        mes = json.dumps(msg)
 
-        while name != 'quit':
+        await websocket.send(mes)
 
-            name = input('You name ')
-            surname = input('Surname ')
-            adr = input('Adres ')
-            msg = [name, surname, adr]
-            mes = json.dumps(msg)
-
-            await websocket.send(mes)
-
-            response = await websocket.recv()
-            print(response)
+        response = await websocket.recv()
+        print(response)
+        websocket.close()
 
 asyncio.get_event_loop().run_until_complete(test())

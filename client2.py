@@ -80,5 +80,5 @@ async def test(ident, pasw):
         #print(response)
         websocket.close()
 
-ident = 'da787eae867843a7bb10131acc4a2da4'
-asyncio.get_event_loop().run_until_complete(test(ident, '11111'))
+ident = '972f46723b38495f94d1d337f52e6f25'
+asyncio.get_event_loop().run_until_complete(test(ident, '22222'))

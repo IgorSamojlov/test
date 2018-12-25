@@ -26,7 +26,7 @@ async def send_msg(ws, ident):
     await ws.send(temp)
 
 async def auth(iden, pasw, ws):
-    msg = {'cmd':'auth','id':iden,'pasw':pasw}
+    msg = {'cmd':'auth','ident':iden,'pasw':pasw}
     temp = json.dumps(msg)
     await ws.send(temp)
     return (await (ws.recv()))

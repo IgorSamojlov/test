@@ -2,6 +2,11 @@ import asyncio
 import websockets
 import json
 import time
+import threading
+
+
+WB = []
+
 
 async def reg(ws):
     msg = {'cmd': 'reg', 'autn': str(time.time()),
@@ -50,8 +55,13 @@ async def test(ident, pasw):
 
     async with websockets.connect('ws://127.0.0.1:8765') as websocket:
 
+
+        thread = threading.Thread(target=reciving, args=(websocket,))
+        thread.start()
+
         if (await auth(ident, pasw, websocket) == 'True'):
             print('Auth done')
+            await (get_message(websocket, ident))
 
             while True:
                 cmd = input ('__ ')
@@ -79,6 +89,7 @@ async def test(ident, pasw):
         #response = await websocket.recv()
         #print(response)
         websocket.close()
+        thread.join()
 
 ident = '972f46723b38495f94d1d337f52e6f25'
 asyncio.get_event_loop().run_until_complete(test(ident, '22222'))

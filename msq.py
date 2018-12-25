@@ -1,40 +1,54 @@
 import sqlite3
 import uuid
 
-def load(ls):
-    conn = sqlite3.connect('new.db')
-    cursor = conn.cursor()
 
-    cursor.execute("SELECT * from users")
+class Sql_worker():
+    def __init__(self, bd):
+        self.conn = sqlite3.connect(bd)
+        self.cursor = self.conn.cursor()
 
-    result = cursor.fetchall()
-    for r in result:
-        ls[r[4]] = {'name':r[0], 'surname': r[1], 'nick':r[2], 'pasw':r[3]}
+    def load(self, ls):
 
-    conn.close()
+        cursor.execute("SELECT * from users")
 
-def add_message(user, adr, msg, d_time):
-    conn = sqlite3.connect('new.db')
-    cursor = conn.cursor()
+        result = cursor.fetchall()
+        for r in result:
+            ls[r[4]] = {'name':r[0], 'surname': r[1], 'nick':r[2], 'pasw':r[3]}
 
-    conn.execute('INSERT INTO messages (user, address, message, d_time) values (?,?,?,?)',
-     (user, adr, msg, d_time))
-    conn.commit()
 
-    conn.close()
+    def add_message(self, user, adr, msg, d_time):
 
-def get_message(ident):
-    conn = sqlite3.connect('new.db')
-    cursor = conn.cursor()
+        self.conn.execute('INSERT INTO messages (user, address, message, d_time) values (?,?,?,?)',
+        (user, adr, msg, d_time))
+        self.conn.commit()
 
-    sql = "SELECT * FROM messages WHERE user=?"
-    cursor.execute(sql, [ident])
-    temp = (cursor.fetchall())
+    def get_message(self, ident):
 
-    sql = "DELETE FROM messages WHERE user=?"
-    cursor.execute(sql, [ident])
+        sql = "SELECT * FROM messages WHERE user=?"
+        self.cursor.execute(sql, [ident])
+        temp = (cursor.fetchall())
 
-    conn.commit()
+        sql = "DELETE FROM messages WHERE user=?"
+        self.cursor.execute(sql, [ident])
 
-    conn.close()
-    return (temp)
+        self.conn.commit()
+
+        return (temp)
+
+    def sql_auth(self, ident, pasw):
+        sql = "SELECT pasword FROM users WHERE uuid =?"
+        self.cursor.execute(sql, [ident])
+        temp = self.cursor.fetchall()
+        if (temp[0][0] == pasw):
+            print (temp[0][0])
+            print (pasw)
+            return(True)
+        else:
+            return(False)
+
+
+    def __del__(self):
+        print ('Sql del')
+        self.conn.close()
+
+

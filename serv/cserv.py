@@ -4,6 +4,7 @@ from json import dumps
 from json import loads
 import websockets
 from db import msq
+import os
 
 class M_server():
     def __init__(self):
@@ -38,30 +39,31 @@ class M_server():
 
     def auth (self):
         if (self.sqlw.sql_auth(self.msg_in)):
-            self.msg_out = 'True'
-            print ('True')
+            answ = 'True'
             self.us_on[self.msg_in['id']] = self.ws
             self.sqlw.sql_us_on(self.msg_in, 'adr')#str(self.ws.remote_address))
         else:
-            self.msg_out = 'False'
+            answ = 'False'
+        self.msg_out = {'cmd': 'auth', 'answer':answ}
+
 
     def send_msg(self):
         if (self.msg_in['adr'] in self.us_on) and (
             self.us_on[msg_in['adr']].ws.open):
             print ('Send message: ')
+            temp = {'cmd': 'msg', 'from':msg_in['id'], 'msg': msg_in['msg'],
+            'time': msg_in['time']}
             self.msg_out = self.msg_in['msg']
         else:
             self.sqlw.msg_in_qu(self.msg_in)
-            ws = self.user_on[msg_in['adr']]
             self.us_quit(ws, msg_in['adr'])
 
     def msg_in_qu(self):
         self.sqlw.add_message(self.msg_in)
 
-    def us_quit(self, ws, ident):
+    def us_quit(self, ident):
         self.sqlw.sql_us_on_del(ident)
-        if self.us_on:
-            self.us_on.pop(ident)
+        self.us_on.pop(ident)
 
     def read_msg(self):
         if (self.msg_in['cmd'] == 'auth'):
@@ -75,7 +77,7 @@ class M_server():
             pass
 
         elif (self.msg_in['cmd'] == 'send_msg'):
-            pass
+            self.send_msg()
 
         elif (self.msg_in['cmd'] == 'quit'):
             self.us_quit(self.ws, self.msg_in['id'])
@@ -83,3 +85,6 @@ class M_server():
         elif (self. msg_in['cmd'] == 'get_message'):
             pass
 
+def work():
+    a = 10
+    print (path)

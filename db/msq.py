@@ -1,18 +1,22 @@
 import sqlite3
 import uuid
+import sys
+import os
 
 
 class Sql_worker():
     def __init__(self):
         print ('conn')
-        self.conn = sqlite3.connect('/Users/igor/Documents/test/db/nw.db')
+        direct = os.path.dirname(os.path.realpath(__file__))
+
+        self.conn = sqlite3.connect(direct +'/nw.db')
         self.cursor = self.conn.cursor()
 
     def sql_add_message(self, msg):
 
         self.conn.execute(
-            'INSERT INTO messages (user, from_ident, message, d_time, nick) values (?,?,?,?)',
-        (msg['adr'], msg['ident'], msg['msg'], msg['time']))
+            'INSERT INTO messages (user, from_ident, message, d_time) values (?,?,?,?)',
+        (msg['adr'], msg['from'], msg['msg'], msg['time']))
         self.conn.commit()
 
     def sql_get_message(self, msg):

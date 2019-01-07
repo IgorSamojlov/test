@@ -3,16 +3,22 @@ import uuid
 import sys
 import os
 
-
 class Sql_worker():
     def __init__(self):
         print ('conn')
-        direct = os.path.dirname(os.path.realpath(__file__))
 
-        self.conn = sqlite3.connect(direct +'/nw.db')
+        self.conn = sqlite3.connect(self.file_name())
         self.cursor = self.conn.cursor()
 
-    def sql_add_message(self, msg):
+    def app_dir(self):
+        return (os.path.dirname(os.path.realpath(__file__)))
+
+    def file_name(self):
+        env = os.getenv('ENV', 'test')
+        file = f'{env}.db'
+        return os.path.join(self.app_dir(), file)
+
+    def msg_in_qu(self, msg):
 
         self.conn.execute(
             'INSERT INTO messages (user, from_ident, message, d_time) values (?,?,?,?)',
@@ -34,7 +40,7 @@ class Sql_worker():
 
     def sql_auth(self, msg):
         sql = 'SELECT pasw FROM users WHERE uuid=?'
-        self.cursor.execute(sql, [msg['id']])
+        self.cursor.execute(sql, msg['id'],)
         temp = self.cursor.fetchall()
         if (temp[0][0] == msg['pasw']):
             print (temp[0][0])
@@ -47,10 +53,11 @@ class Sql_worker():
         (msg['id'], adr))
         self.conn.commit()
 
-    def sql_us_on_del(self, ide):
+    def sql_us_on_del(self, *ide):
         sql = 'DELETE FROM users_on WHERE ident=?'
-        self.conn.execute(sql, [ide])
-        self.conn.commit()
+        for i in ide:
+            self.conn.execute(sql, [i])
+            self.conn.commit()
 
     def __del__(self):
         print ('Sql del')

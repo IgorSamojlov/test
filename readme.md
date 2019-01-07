@@ -2,5 +2,6 @@
 ***
 >Add test
 >Test client msg
->DB
+>DB file name
+>Test - ENV=nw pytest
 ---

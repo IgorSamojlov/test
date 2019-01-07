@@ -13,6 +13,7 @@ class M_server():
         self.msg_in = None
         self.msg_out = None
         self.ws = None
+        self.ws_send = None
         self.sqlw = msq.Sql_worker()
 
     async def run(self, websocket, path):
@@ -46,17 +47,30 @@ class M_server():
             answ = 'False'
         self.msg_out = {'cmd': 'auth', 'answer':answ}
 
+    def get_user_on(self):
+        us_on_t = list(set(self.get_key()) & set (self.msg_in['us']))
+        self.msg_out = {'cmd': 'us_on', 'us_on':us_on_t}
+
+    def get_key(self):
+        return self.us_on.keys()
 
     def send_msg(self):
         if (self.msg_in['adr'] in self.us_on) and (
-            self.us_on[msg_in['adr']].ws.open):
+            self.us_on[self.msg_in['adr']].open):
             print ('Send message: ')
-            temp = {'cmd': 'msg', 'from':msg_in['id'], 'msg': msg_in['msg'],
-            'time': msg_in['time']}
-            self.msg_out = self.msg_in['msg']
-        else:
+            temp = {'cmd': 'msg', 'from':self.msg_in['from'],
+             'msg': self.msg_in['msg'],
+            'time': self.msg_in['time']}
+            self.ws_send = self.us_on[self.msg_in['adr']]
+            self.msg_out = temp
+
+        elif (self.msg_in['adr'] in self.us_on) and not(
+            self.us_on[self.msg_in['adr']].open):
             self.sqlw.msg_in_qu(self.msg_in)
-            self.us_quit(ws, msg_in['adr'])
+
+        elif (self.msg_in['adr'] not in self.us_on):
+            self.sqlw.msg_in_qu(self.msg_in)
+
 
     def msg_in_qu(self):
         self.sqlw.add_message(self.msg_in)
@@ -74,7 +88,7 @@ class M_server():
             regis(websocket, msg)
 
         elif (self.msg_in['cmd'] == 'get_user'):
-            pass
+            self.get_user_on()
 
         elif (self.msg_in['cmd'] == 'send_msg'):
             self.send_msg()
@@ -85,6 +99,4 @@ class M_server():
         elif (self. msg_in['cmd'] == 'get_message'):
             pass
 
-def work():
-    a = 10
-    print (path)
+

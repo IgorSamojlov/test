@@ -14,7 +14,7 @@ class Sql_worker():
         return (os.path.dirname(os.path.realpath(__file__)))
 
     def file_name(self):
-        env = os.getenv('ENV', 'test')
+        env = os.getenv('ENV', 'nw')
         file = f'{env}.db'
         return os.path.join(self.app_dir(), file)
 
@@ -39,8 +39,8 @@ class Sql_worker():
         return (temp)
 
     def sql_auth(self, msg):
-        sql = 'SELECT pasw FROM users WHERE uuid=?'
-        self.cursor.execute(sql, msg['id'],)
+        sql = 'SELECT pasw FROM users WHERE login=?'
+        self.cursor.execute(sql, [msg['login']])
         temp = self.cursor.fetchall()
         if (temp[0][0] == msg['pasw']):
             print (temp[0][0])
@@ -49,15 +49,34 @@ class Sql_worker():
             return(False)
 
     def sql_us_on(self, msg, adr):
-        self.conn.execute('INSERT INTO users_on (ident, remote_address) values (?,?)',
+        self.conn.execute(
+            'INSERT INTO users_on (ident, remote_address) values (?,?)',
         (msg['id'], adr))
         self.conn.commit()
 
-    def sql_us_on_del(self, *ide):
-        sql = 'DELETE FROM users_on WHERE ident=?'
+    def sql_us_on_del(self, ide):
+        sql = "DELETE FROM users_on WHERE ident=?"
         for i in ide:
             self.conn.execute(sql, [i])
             self.conn.commit()
+
+
+    def sql_regis(self, msg):
+
+        sql = 'SELECT EXISTS(SELECT * FROM users WHERE login=? LIMIT 1)'
+
+        self.cursor.execute(sql, [msg['login']])
+        temp = self.cursor.fetchall()
+        if ((temp[0][0]) == 0):
+            sql = 'INSERT INTO users (nick, login, pasw) values (?,?,?)'
+            self.conn.execute(sql, [msg['nick'], msg['login'], msg['pasw']])
+            self.conn.commit()
+            return(True)
+
+        else:
+            return(False)
+
+
 
     def __del__(self):
         print ('Sql del')

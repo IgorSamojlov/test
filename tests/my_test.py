@@ -1,11 +1,11 @@
 import pytest
 from db import msq
-from serv import cserv
+from serv import msgworker
 from json import dumps
 from json import loads
 from tests import mws
 
-s = cserv.M_server()
+s = msgworker.Msg_worker()
 sq = msq.Sql_worker()
 
 class Test_serv(object):
@@ -19,20 +19,21 @@ class Test_serv(object):
         pass
 
     def test_auth(self):
-        s.msg_in = {'cmd':'auth','id':'da787eae867843a7bb10131acc4a2da4',
-        'pasw':'11111'}
-        assert s.auth() == None
+        pass
 
-    def test_send_msg(self):
-        s.msg_in = {'cmd': 'send_msg', 'msg':'Hello', 'time':'time',
-        'adr':'aaa', 'from':'da787eae867843a7bb10131acc4a2da4'}
 
-        assert s.send_msg() == None
+    def test_regis(self):
+        msg = {'cmd':'reg', 'name':'Igo', 'pasw':'11111',
+         'login':'Igoryan', 'nick':'nick'}
+        assert sq.sql_regis(msg) == 0
 
-    def test_us_on(self):
-        s.msg_in = {'cmd': 'get_user', 'us': ['78ae236b5255425682defa181e2c8d98',
-        'a6d2ea43c4234109a0873aa00d400a19']}
+    def test_regiss(self):
+        s.msg_in = {'cmd':'reg', 'name':'Igorr', 'pasw':'11111',
+         'login':'Igoryan', 'nick':'nickkk'}
+        s.regis()
+        assert s.msg_out != None
 
-        assert s.get_user_on() == None
-        assert len(s.msg_out['us_on']) > 0
+
+
+
 

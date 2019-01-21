@@ -38,11 +38,11 @@ class Msg_worker():
 
     def auth (self):
         if (self.m_sql.sql_auth(self.msg_in)):
-            answ = 'True'
+            answ = True
             self.us_on[self.msg_in['login']] = 'ws'
             #self.sqlw.sql_us_on(self.msg_in, 'adr')
         else:
-            answ = 'False'
+            answ = False
         self.fmsg_out({'cmd': 'auth', 'answer':answ})
 
 

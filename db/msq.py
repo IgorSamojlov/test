@@ -39,12 +39,12 @@ class Sql_worker():
         return (temp)
 
     def sql_auth(self, msg):
-        sql = 'SELECT pasw FROM users WHERE login=?'
+        sql = 'SELECT pasw, nick FROM users WHERE login=?'
         self.cursor.execute(sql, [msg['login']])
         temp = self.cursor.fetchall()
+        print(temp)
         if (temp[0][0] == msg['pasw']):
-            print (temp[0][0])
-            return(True)
+            return(True, temp[0][1])
         else:
             return(False)
 

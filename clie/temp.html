@@ -1,0 +1,40 @@
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.9/angular.min.js"></script>
+
+<script type="text/javascript">
+    var app = angular.module('MyApp', [])
+    app.controller('MyController', function ($scope) {
+
+       const ws = new WebSocket("ws://localhost:5000/ws");
+
+       ws.onmessage = (event) => {
+       const data = JSON.parse(event.data);
+
+       if (data.event === 'user') {
+        // ...
+       }
+
+       if (data.event === 'news') {
+        // ...
+       }
+       };
+
+
+       $scope.ButtonClick = function () {
+            $scope.Message = "Button clicked."
+
+        }
+        $scope.BT = function () {
+            ws.send("Hello")
+
+        }
+    });
+</script>
+
+<div ng-app="MyApp" ng-controller="MyController">
+    <input type="button" value="Click Me!" ng-click="ButtonClick()" />
+    <br />
+    <br />
+    <span ng-bind="Message"></span>
+
+    <input type="button" value="Hello" ng-click="BT()" name="">
+</div>

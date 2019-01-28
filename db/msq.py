@@ -43,10 +43,10 @@ class Sql_worker():
         self.cursor.execute(sql, [msg['login']])
         temp = self.cursor.fetchall()
         print(temp)
-        if (temp[0][0] == msg['pasw']):
-            return(True, temp[0][1])
+        if (temp) and (temp[0][0] == msg['pasw']):
+            return(temp[0][1])
         else:
-            return(False)
+            return (None)
 
     def sql_us_on(self, msg, adr):
         self.conn.execute(

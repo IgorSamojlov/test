@@ -12,7 +12,14 @@ class Msg_worker():
 
 
     def read_msg(self, msg):
-        self.msg_in = loads(msg)
+        try:
+            self.msg_in = loads(msg)
+        except Exception as e:
+            if e:
+                print('Error')
+            self.fmsg_out('Error in messge from client')
+            return
+
         if (self.msg_in['cmd'] == 'auth'):
             self.auth()
 
@@ -39,11 +46,12 @@ class Msg_worker():
     def auth (self):
         if (self.m_sql.sql_auth(self.msg_in)):
             answ = True
+
             self.us_on[self.msg_in['login']] = 'ws'
             #self.sqlw.sql_us_on(self.msg_in, 'adr')
         else:
             answ = False
-        self.fmsg_out({'cmd': 'auth', 'answer':answ})
+        self.fmsg_out({'cmd': 'auth', 'nick':'n', 'answer':answ})
 
 
     def get_user_on(self):

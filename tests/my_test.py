@@ -27,11 +27,11 @@ class Test_serv(object):
          'login':'Igoryan', 'nick':'nick'}
         assert sq.sql_regis(msg) == 0
 
-    def test_regiss(self):
-        s.msg_in = {'cmd':'reg', 'name':'Igorr', 'pasw':'11111',
+    def test_add_table(self):
+        msg = {'cmd':'reg', 'name':'Igor', 'pasw':'11111',
          'login':'Igoryan', 'nick':'nickkk'}
-        s.regis()
-        assert s.msg_out != None
+
+        assert sq.add_table_user(msg) == None
 
 
 

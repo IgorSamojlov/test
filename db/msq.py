@@ -5,10 +5,10 @@ import os
 
 class Sql_worker():
     def __init__(self):
-        print ('conn')
 
         self.conn = sqlite3.connect(self.file_name())
         self.cursor = self.conn.cursor()
+        print ('DB is open')
 
     def app_dir(self):
         return (os.path.dirname(os.path.realpath(__file__)))
@@ -50,8 +50,8 @@ class Sql_worker():
 
     def sql_us_on(self, msg, adr):
         self.conn.execute(
-            'INSERT INTO users_on (ident, remote_address) values (?,?)',
-        (msg['id'], adr))
+            'INSERT INTO user_on (login, remote_address) values (?,?)',
+        (msg['login'], adr))
         self.conn.commit()
 
     def sql_us_on_del(self, ide):
@@ -71,13 +71,26 @@ class Sql_worker():
             sql = 'INSERT INTO users (nick, login, pasw) values (?,?,?)'
             self.conn.execute(sql, [msg['nick'], msg['login'], msg['pasw']])
             self.conn.commit()
+            self.add_table_user(msg)
             return(True)
-
         else:
             return(False)
 
+    def add_table_user(self, msg):
+        table_name = (msg['login'] + '_friends')
+        sql = 'CREATE TABLE {} (name text)'.format(table_name)
 
+        self.cursor.execute(sql)
+        self.conn.commit()
 
+    def sql_get_fr(self, log):
+        table = (log + '_friends')
+        sql = 'SELECT login FROM {}'.format(table)
+        self.cursor.execute(sql)
+        temp =(self.cursor.fetchall())
+        print(temp[0][0])
+        if (temp[0] == 'John'):
+            print ('""""""')
     def __del__(self):
         print ('Sql del')
         self.conn.close()

@@ -11,15 +11,19 @@ async def run(websocket, path):
 
     await websocket.send(json.dumps({'cmd':'msg',
      'text':'Hello from server', 'from':'Server'}))
+    try:
+        async for message in websocket:
+            print(message)
+            msg_serv.ws = websocket
+            msg_serv.read_msg(message)
 
-    async for message in websocket:
-        print(message)
-        msg_serv.read_msg(message)
+            try:
+                await websocket.send(msg_serv.msg_out)
 
-        try:
-            print (msg_serv.msg_out)
-            await websocket.send(msg_serv.msg_out)
+            except Exception as e:
+                print(e)
 
-        except Exception as e:
-          print(e)
-
+    except Exception as e:
+        #if (e.code == 1006):
+            msg_serv.ws = websocket
+            msg_serv.abnorm_quit()

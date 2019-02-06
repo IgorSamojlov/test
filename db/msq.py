@@ -88,9 +88,11 @@ class Sql_worker():
         sql = 'SELECT login FROM {}'.format(table)
         self.cursor.execute(sql)
         temp =(self.cursor.fetchall())
-        print(temp[0][0])
-        if (temp[0] == 'John'):
-            print ('""""""')
+        return (self.format_user(temp))
+
+    def format_user(self, user):
+        return (list(x[0] for x in user))
+
     def __del__(self):
         print ('Sql del')
         self.conn.close()

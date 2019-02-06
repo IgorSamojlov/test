@@ -14,6 +14,7 @@ class Rthread (Thread):
             try:
                 temp = self.ws.recv()
             except Exception as e:
+                print(e)
                 print ('Run is over\n')
                 break
             if (temp):

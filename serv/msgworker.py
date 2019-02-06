@@ -10,6 +10,7 @@ class Msg_worker():
         self.msg_in = None
         self.msg_out = None
         self.ws = None
+        self.us_on_set = set()
 
 
     def read_msg(self, msg):
@@ -53,13 +54,21 @@ class Msg_worker():
                 print('User not online')
 
     def get_fr(self):
-        self.m_sql.sql_get_fr(self.us_on[str(self.ws.remote_address)][0])
+        user = self.m_sql.sql_get_fr(self.us_on[str(self.ws.remote_address)][0])
+        self.fmsg_out({'cmd':'get_fr', 'friends':user,
+         'fr_on':'ss'})
+
+    def get_fr_on(self, user):
+        a = set(user)
+        print (a & set('Ann'))
 
     def auth (self):
         if (self.m_sql.sql_auth(self.msg_in)):
             answ = True
 
-            self.us_on[str(self.ws.remote_address)] = [self.msg_in['login'], self.ws]
+            self.us_on[str(self.ws.remote_address)] = [self.msg_in['login'],
+             self.ws]
+            self.us_on_set.add(self.msg_in['login'])
             self.m_sql.sql_us_on(self.msg_in, str(self.ws.remote_address))
         else:
             answ = False
@@ -70,9 +79,6 @@ class Msg_worker():
         us_on_t = list(set(self.get_key()) & set (self.msg_in['us']))
         self.fmsg_out({'cmd': 'us_on', 'us_on':us_on_t})
 
-
-    def get_key(self):
-        return self.us_on.keys()
 
     def send_msg(self):
         if (self.msg_in['adr'] in self.us_on) and (

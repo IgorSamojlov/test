@@ -5,3 +5,6 @@ def read_msg(msg):
         print('Message from', msg['from'], ' ', msg['text'])
     elif (msg['cmd'] == 'reg'):
         print ('Registration is ', msg['answer'])
+    elif (msg['cmd'] == 'get_fr'):
+        print (msg['friends'])
+

@@ -1,0 +1,199 @@
+<style type="text/css">
+body {
+  background: #20262E;
+  padding: 20px;
+  font-family: Helvetica;
+}
+[data-contact-list] {
+  background: #fff;
+  border-radius: 4px;
+  padding: 20px;
+  font-size: 25px;
+  text-align: center;
+  transition: all 0.2s;
+  margin: 0 auto;
+  width: 200px;
+  float: right;
+}
+
+#output {
+  background: #777;
+  border-radius: 2px;
+  padding: 5px;
+  font-size: 15px;
+  transition: all 0.1s;
+  width: 400px;
+}
+
+#send_au {
+  background: #888;
+  border-radius: 4px;
+  padding: 5px;
+  font-size: 20px;
+  text-align: center;
+  transition: all 0.1s;
+  width: 400px;
+}
+
+[data-user-id] {
+  font-size: 15px;
+  text-align: center;
+  transition: all 0.2s;
+  margin: 0 auto;
+}
+
+</style>
+</head>
+<!DOCTYPE html>
+
+<html>
+<head>
+
+  <title>WebSockets Client</title>
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+</head>
+<body>
+
+  <div data-contact-list>
+    <div>Contacts</div>
+    <div class='contact' data-user-id=1>
+      Me
+    </div>
+  </div>
+  <div id="log">
+
+  </div>
+    <div id="send_au"><h3>Messages</h3></div>
+    <div id="send_au">
+        <div>Login:</div>
+        <input type="text" id="datal" size="70"/><br>
+        <input type="text" id="datap" size="70"/><br>
+        <input type="button" id="auth" value="Autentif.."/>
+    </div>
+
+    <div id="send_au">
+      <div>Message:</div>
+    </div>
+    <div id="send_au">
+        <input type="text" id="data" size="70"/><br>
+        <input type="button" id="sendtext" value="send text"/>
+    </div>
+
+    <div id="output">
+
+    </div>
+    <script>
+
+    jQuery(function($){
+      if (!("WebSocket" in window)) {
+        alert("Your browser does not support web sockets");
+      }else{
+        setup();
+      }
+
+      function setup(){
+        // Note: You have to change the host var
+        // if your client runs on a different machine than the websocket server
+
+        var host = "ws://localhost:5000/ws";
+        var socket = new WebSocket(host);
+        //console.log("socket status: " + socket.readyState);
+
+        var $txtl = $("#datal");
+        var $txtp = $("#datap");
+
+        var $txt = $("#data");
+        var $btnSend = $("#sendtext");
+        var $btnSendA = $("#auth");
+
+        $txt.focus();
+
+        $btnSendA.on('click',function(){
+          var textl = $txtl.val();
+          var textp = $txtp.val();
+
+
+          socket.send(JSON.stringify({cmd:'auth',login:textl,pasw:textp}));
+
+        });
+
+        $('[data-user-id]').on("click", function(){
+          userId = $(this).attr('data-user-id')
+          var nuserId = "3"
+          var userName = "name"
+          var con = "contact"
+          $('[data-contact-list]').append(
+            "<div class='contact' data-user-id=" + nuserId + ">" + userName + "</div>")
+
+        //log.append("<p>" + userId + "</p>")
+      })
+        // event handlers for UI
+        $btnSend.on('click',function(){
+          var text = $txt.val();
+          if(text == ""){
+            return;
+          }
+          socket.send(JSON.stringify({msg: text}));
+          $txt.val("");
+        });
+
+        $txt.keypress(function(evt){
+          if(evt.which == 13){
+            $btnSend.click();
+          }
+        });
+
+        // event handlers for websocket
+        if(socket){
+
+          socket.onopen = function(){
+            //alert("connection opened....");
+          }
+
+          socket.onmessage = function(msg){
+            showServerResponse(msg.data);
+          }
+
+          socket.onclose = function(){
+            //alert("connection closed....");
+            showServerResponse("The connection has been closed.");
+          }
+
+        }else{
+          console.log("invalid socket");
+        }
+
+        function showServerResponse(data){
+          var div = document.createElement('div');
+          var html;
+          msg = JSON.parse(data);
+          switch(msg['cmd']) {
+            case 'auth_request':
+              html = 'Enter your name'
+              break
+            case 'auth':
+              if (msg['answer']){
+                html = '<em><strong>' + msg['nick'] + '</strong> Auth done .</em>'
+                $txtl.val("");
+                $txtp.val("");
+                document.getElementById("datal").disabled = true;
+                document.getElementById("datap").disabled = true;
+
+              }
+              html = '<em><strong>' + msg['answer'] + '</strong> entered the chat.</em>'
+              break
+            case 'left':
+              html = '<em><strong>' + msg['name'] + '</strong> left the chat.</em>'
+              break
+            case 'msg':
+              html = '<strong>' + msg['name'] + '</strong>: ' + msg['text']
+              break
+          }
+          div.innerHTML = html
+          document.getElementById('output').appendChild(div);
+        }
+      }
+    });
+    </script>
+</body>
+</html>

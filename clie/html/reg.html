@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSockets Client</title>
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+</head>
+<body>
+    <div><h3>Messages</h3></div>
+    <div id="output"></div>
+    <div>Enter text to send to the websocket server:</div>
+    <div id="send">
+        <div>Login:</div>
+        <input type="text" id="data" size="70"/><br>
+        <div>Pasw:</div>
+        <input type="text" id="data1" size="70"/><br>
+        <div>Nick:</div>
+        <input type="text" id="data2" size="70"/><br>
+        <input type="button" id="sendtext" value="Reg"/>
+    </div>
+    <script>
+    jQuery(function($){
+      if (!("WebSocket" in window)) {
+        alert("Your browser does not support web sockets");
+      }else{
+        setup();
+      }
+
+      function setup(){
+        // Note: You have to change the host var
+        // if your client runs on a different machine than the websocket server
+
+        var host = "ws://localhost:5000/ws";
+        var socket = new WebSocket(host);
+        //console.log("socket status: " + socket.readyState);
+
+        var $txt = $("#data");
+        var $txt1 = $("#data1");
+        var $txt2 = $("#data2");
+
+        var $btnSend = $("#sendtext");
+
+        $txt.focus();
+
+        // event handlers for UI
+        $btnSend.on('click',function(){
+          var text = $txt.val();
+          var text1 = $txt1.val();
+          var text2 = $txt2.val();
+          if (text1 == ""){
+            return;
+          }
+          if (text == ""){
+            return;
+          }
+          if (text2 == ""){
+            return;
+          }
+          socket.send(JSON.stringify({cmd:'reg',login:text,pasw:text1,nick:text2}));
+          $txt.val("");
+          $txt1.val("");
+          $txt2.val("");
+        });
+
+        $txt.keypress(function(evt){
+          if(evt.which == 13){
+            $btnSend.click();
+          }
+        });
+
+        // event handlers for websocket
+        if(socket){
+
+          socket.onopen = function(){
+            //alert("connection opened....");
+          }
+
+          socket.onmessage = function(msg){
+            showServerResponse(msg.data);
+          }
+
+          socket.onclose = function(){
+            //alert("connection closed....");
+            showServerResponse("The connection has been closed.");
+          }
+
+        }else{
+          console.log("invalid socket");
+        }
+
+        function showServerResponse(data){
+          var div = document.createElement('div');
+          var html;
+          msg = JSON.parse(data);
+          switch(msg['cmd']) {
+            case 'reg':
+              html = '<strong>' + 'Registration ' + '</strong>: ' + msg['result']
+              break
+          }
+          div.innerHTML = html
+          document.getElementById('output').appendChild(div);
+        }
+      }
+    });
+    </script>
+</body>
+</html>

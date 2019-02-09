@@ -1,0 +1,13 @@
+form client to server
+
+auth msg = {'cmd':'auth','id':ident,'pasw':pasw}
+quit msg = {'cmd':'quit', 'id': ident}
+get_user msg = {'cmd': 'get_user', 'us': ['', '']}
+send_msg msg = {'cmd':'msg', 'from':'id', 'adr':'id', 'msg': 'Hello', 'time': '12,11,22'}
+
+
+from server to client
+
+auth msg = {'cmd':'auth', 'answer': 'True/False'}
+msg msg = {'cmd':'msg', 'from':'id', 'msg':'Hello', 'time': '12,11,22'}
+

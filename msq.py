@@ -1,6 +1,7 @@
 import sqlite3
 import uuid
 
+
 def load(ls):
     conn = sqlite3.connect('new.db')
     cursor = conn.cursor()

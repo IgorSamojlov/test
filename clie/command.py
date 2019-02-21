@@ -7,6 +7,7 @@ class Mcmd():
         self.msg_out = None
 
     def read_msg(self, cmd):
+        print('reaaad')
         if (cmd == '_auth'):
             self.auth()
         elif (cmd == '_reg'):
@@ -15,9 +16,16 @@ class Mcmd():
             self.get_fr()
         elif (cmd == 'q'):
             self.quit_m()
+        elif (cmd == '_send_msg'):
+            self.send_msg()
 
     def f_msg(self, msg):
         self.msg_out = dumps(msg)
+
+    def send_msg(self):
+        name = input('Name please> ')
+        msg = input('Msg> ')
+        self.f_msg({'cmd':'send_msg', 'from':'Igor', 'msg':msg, 'adr':name})
 
     def auth(self):
         log = input('login> ')
@@ -29,14 +37,12 @@ class Mcmd():
         log = input('login> ')
         pas = input('pasw> ')
         nic = input('nick> ')
+        self.f_msg({'cmd':'reg', 'login': log.strip(),
+         'nick': nic.strip(), 'pasw': pas.strip()})
+
 
     def get_fr(self):
         self.f_msg({'cmd':'get_fr'})
-
-
-    def regis(self):
-        self.f_msg({'cmd':'reg', 'login': log.strip(),
-         'nick': nic.strip(), 'pasw': pas.strip()})
 
     def get_msg(self):
         if (self.msg_out):

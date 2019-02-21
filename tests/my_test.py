@@ -11,10 +11,10 @@ sq = msq.Sql_worker()
 class Test_serv(object):
 
     def setup(self):
-        s.ws = mws.Ws()
-        s.us_on['78ae236b5255425682defa181e2c8d98'] = 'ws'
-        s.us_on['a6d2ea43c4234109a0873aa00d400a19'] = 'ws'
-
+        #s.ws = mws.Ws()
+        s.ws = '22222'
+        s.us_on = {'11111':'Ann', '22222':'Igor'}
+        s.us_on_rev = {'Ann':'11111', 'Igor':'22222'}
     def setup_method(self):
         pass
 
@@ -23,16 +23,10 @@ class Test_serv(object):
 
 
     def test_regis(self):
-        msg = {'cmd':'reg', 'name':'Igo', 'pasw':'11111',
-         'login':'Igoryan', 'nick':'nick'}
-        assert sq.sql_regis(msg) == 0
+        pass
 
-    def test_add_table(self):
-        msg = {'cmd':'reg', 'name':'Igor', 'pasw':'11111',
-         'login':'Igoryan', 'nick':'nickkk'}
-
-        assert sq.add_table_user(msg) == None
-
+    def test_get_fr(self):
+        assert s.get_fr() == {'Ann'}
 
 
 

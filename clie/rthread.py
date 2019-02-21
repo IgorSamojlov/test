@@ -1,12 +1,14 @@
 from threading import Thread
-from recvmsg import read_msg
 from json import loads
 from json import dumps
+from colorama import Fore, Style
 
 class Rthread (Thread):
-    def __init__(self, ws):
+    def __init__(self, ws, friend):
         Thread.__init__(self)
         self.ws = ws
+        self.msg = None
+        self.fr = friend
 
     def run(self):
 
@@ -18,7 +20,27 @@ class Rthread (Thread):
                 print ('Run is over\n')
                 break
             if (temp):
-                msg = loads(temp)
+                self.msg = loads(temp)
                 temp = None #?????????????????????????????
-            print('Message from server ', msg)
-            read_msg(msg)
+            self.read_msg()
+
+    def read_msg(self):
+        print (self.msg)
+        if (self.msg['cmd'] == 'auth'):
+            print('Message from server: auth is:', self.msg['answer'])
+        elif(self.msg['cmd'] == 'msg'):
+            print('Message from', self.msg['from'], ' ', self.msg['msg'])
+        elif (self.msg['cmd'] == 'reg'):
+            print ('Registration is ', self.msg['answer'])
+        elif (self.msg['cmd'] == 'get_fr'):
+            self.swow_friends(self.msg['friends'], self.msg['friends_on'])
+
+    def swow_friends(self, all_fr, fr_on):
+        for f in all_fr:
+            for a in fr_on:
+                if a == f:
+                    print (Fore.GREEN + f)
+                else:
+                    print (Fore.RED + f)
+
+        print(Style.RESET_ALL)

@@ -10,7 +10,7 @@ async def run(websocket, path):
     print(websocket.remote_address, ' ')
 
     await websocket.send(json.dumps({'cmd':'msg',
-     'text':'Hello from server', 'from':'Server'}))
+     'msg':'Hello from server', 'from':'Server'}))
     try:
         async for message in websocket:
             print(message)
@@ -19,6 +19,9 @@ async def run(websocket, path):
 
             try:
                 await websocket.send(msg_serv.msg_out)
+                if msg_serv.msg_other:
+                    await msg_serv.ws_other.send(msg_serv.msg_other)
+                    msg_serv.clear()
 
             except Exception as e:
                 print(e)

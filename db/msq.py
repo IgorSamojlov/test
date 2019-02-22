@@ -18,26 +18,6 @@ class Sql_worker():
         file = f'{env}.db'
         return os.path.join(self.app_dir(), file)
 
-    def msg_in_qu(self, msg):
-
-        self.conn.execute(
-            'INSERT INTO messages (user, from_ident, message, d_time) values (?,?,?,?)',
-        (msg['adr'], msg['from'], msg['msg'], msg['time']))
-        self.conn.commit()
-
-    def sql_get_message(self, msg):
-
-        sql = "SELECT * FROM messages WHERE user=?"
-        self.cursor.execute(sql, msg['id'])
-        temp = (cursor.fetchall())
-
-        sql = 'DELETE FROM messages WHERE user=?'
-        self.cursor.execute(sql, msg['id'])
-
-        self.conn.commit()
-
-        return (temp)
-
     def sql_auth(self, msg):
         sql = 'SELECT pasw, nick FROM users WHERE login=?'
         self.cursor.execute(sql, [msg['login']])
@@ -84,7 +64,7 @@ class Sql_worker():
         self.conn.commit()
 
     def sql_get_fr(self, log):
-        table = (log + '_friends')
+        table = log + '_friends'
         sql = 'SELECT login FROM {}'.format(table)
         self.cursor.execute(sql)
         temp =(self.cursor.fetchall())
@@ -92,6 +72,27 @@ class Sql_worker():
 
     def format_user(self, user):
         return (list(x[0] for x in user))
+
+    def sql_add_message(self, msg):
+        sql = 'INSERT INTO messages (user_from, to_user, message, m_time, read)\
+         values (?, ?, ?, ?, ?)'
+        self.cursor.execute(sql, [msg['from'], msg['adr'],
+                                 msg['msg'], msg['time'], 'n'])
+        self.conn.commit()
+
+
+    def sql_read_messages(self, msg):
+        sql = 'SELECT * FROM messages WHERE to_user=? AND read="n"'
+        self.cursor.execute(sql, [msg['login']])
+        temp = (self.cursor.fetchall())
+        sql = 'UPDATE messages SET read="y" WHERE to_user=?'
+
+        self.cursor.execute(sql, [msg['login']])
+        self.conn.commit()
+        print (temp)
+
+    def get_table_name(self, msg):
+        return(msg['from'] + '_' + msg['adr'] + '_' + 'messages')
 
     def __del__(self):
         print ('Sql del')

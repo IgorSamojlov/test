@@ -92,12 +92,12 @@ class Msg_worker():
             self.ws_other = self.us_on_rev[self.msg_in['adr']]
 
             self.msg_other = dumps(temp)
-            print(self.ws_other, self.msg_other)
             self.fmsg_out({'cmd':'send_msg', 'res':'done'})
 
 
         elif (self.msg_in['adr'] in self.us_on) and not(
             self.us_on[self.msg_in['adr']].open):
+            print('Not online', '\n')
             self.sqlw.msg_in_qu(self.msg_in)
 
         elif (self.msg_in['adr'] not in self.us_on):

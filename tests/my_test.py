@@ -26,8 +26,11 @@ class Test_serv(object):
         pass
 
     def test_get_fr(self):
-        assert s.get_fr() == {'Ann'}
-
+        pass
+    def test_add_message(self):
+        msg = {'from':'Igor', 'adr':'Ann', 'time':'time',
+                 'st':'n_read', 'msg':'Hello my dear frend'}
+        assert (sq.add_message(msg) == None)
 
 
 

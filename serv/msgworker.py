@@ -14,9 +14,10 @@ class Msg_worker():
         self.ws_other = None
         self.msg_other = None
 
-    def clear(self):
+    def clear_other_msg(self):
         self.ws_other = None
         self.msg_other = None
+
 
     def read_msg(self, msg):
         try:
@@ -95,10 +96,10 @@ class Msg_worker():
             self.fmsg_out({'cmd':'send_msg', 'res':'done'})
 
 
-        elif (self.msg_in['adr'] in self.us_on) and not(
+        elif (self.msg_in['adr'] not in self.us_on_rev) or not(
             self.us_on[self.msg_in['adr']].open):
-            print('Not online', '\n')
-            self.sqlw.msg_in_qu(self.msg_in)
+            print('Message to que\n')
+            self.m_sql.sql_add_message(self.msg_in)
 
         elif (self.msg_in['adr'] not in self.us_on):
             print('Error')

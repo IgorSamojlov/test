@@ -33,14 +33,16 @@ class Rthread (Thread):
         elif (self.msg['cmd'] == 'reg'):
             print ('Registration is ', self.msg['answer'])
         elif (self.msg['cmd'] == 'get_fr'):
-            self.swow_friends(self.msg['friends'], self.msg['friends_on'])
+            self.show_friends(self.msg['friends'], self.msg['friends_on'])
 
-    def swow_friends(self, all_fr, fr_on):
-        for f in all_fr:
-            for a in fr_on:
-                if a == f:
-                    print (Fore.GREEN + f)
+    def show_friends(self, all_fr, fr_on):
+        if (all_fr and fr_on):
+            for f in all_fr:
+                for a in fr_on:
+                    print(Fore.GREEN + f)
                 else:
-                    print (Fore.RED + f)
-
+                    print(Fore.RED + f)
+        elif not fr_on and all_fr:
+            for f in all_fr:
+                print(Fore.RED + f)
         print(Style.RESET_ALL)

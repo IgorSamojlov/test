@@ -8,15 +8,15 @@ class Mcmd():
 
     def read_msg(self, cmd):
         print('reaaad')
-        if (cmd == '_auth'):
+        if (cmd == 'auth'):
             self.auth()
-        elif (cmd == '_reg'):
+        elif (cmd == 'reg'):
             self.regis()
-        elif (cmd == '_get_fr'):
+        elif (cmd == 'get_fr'):
             self.get_fr()
         elif (cmd == 'q'):
             self.quit_m()
-        elif (cmd == '_send_msg'):
+        elif (cmd == 'send_msg'):
             self.send_msg()
 
     def f_msg(self, msg):
@@ -25,7 +25,8 @@ class Mcmd():
     def send_msg(self):
         name = input('Name please> ')
         msg = input('Msg> ')
-        self.f_msg({'cmd':'send_msg', 'from':'Igor', 'msg':msg, 'adr':name})
+        self.f_msg({'cmd':'send_msg', 'from':'Igor',
+                     'msg':msg, 'adr':name, 'time':'time'})
 
     def auth(self):
         log = input('login> ')

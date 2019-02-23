@@ -17,7 +17,7 @@ class Clieworker():
 
     def run(self, state):
 
-        self.auto_tab(['_auth', '_reg', '_get', '_get_fr'])
+        self.auto_tab(['auth', 'reg', 'get_fr', 'send_msg'])
         cmd = Mcmd()
 
         print ('For exit > q')

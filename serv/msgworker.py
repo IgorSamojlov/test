@@ -106,9 +106,6 @@ class Msg_worker():
             #self.sqlw.msg_in_qu(self.msg_in)
 
 
-    def msg_in_qu(self):
-        self.sqlw.add_message(self.msg_in)
-
     def us_quit(self, ws):
         #self.sqlw.sql_us_on_del(ident)
         self.us_on.pop(self.ws)

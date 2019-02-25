@@ -21,7 +21,8 @@ class Clieworker():
         cmd = Mcmd()
 
         print ('For exit > q')
-        self.websocket.send(dumps({'cmd':'auth', 'login':'Igor', 'pasw':'11111'}))
+        self.websocket.send(
+            dumps({'cmd':'auth', 'login':'Igor', 'pasw':'11111'}))
 
         while True:
             command = input('> ')

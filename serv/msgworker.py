@@ -1,7 +1,10 @@
+import logging
 from json import dumps
 from json import loads
 
 from db import msq
+
+#logging.basicConfig(filename='logg.log', level=logging.INFO)
 
 class Msg_worker():
     def __init__(self):
@@ -18,45 +21,42 @@ class Msg_worker():
         self.ws_other = None
         self.msg_other = None
 
-
-    def read_msg(self, msg):
+    def check_msg(self, msg):
         try:
             self.msg_in = loads(msg)
         except Exception as e:
             if e:
-                print('Error', e, self.msg_in)
-                self.fmsg_out('Error in messge from client')
-            return
-
-        if (self.msg_in['cmd'] == 'auth') or (self.msg_in['cmd'] == 'reg'):
-            if (self.msg_in['cmd']) == 'auth':
-                self.auth()
-            elif (self.msg_in['cmd'] == 'reg'):
-                print('Registraton \n')
-                self.regis()
-
+                logging.info('msg not json type', e)
+                self.fmsg_out('msg not json type')
+                return(False)
+        cmd = ['reg', 'auth', 'get_msg', 'get_fr', 'quit']
+        if self.msg_in['cmd'] in cmd:
+            return(True)
         else:
-            if (self.ws in self.us_on):
-                print('User online ', self.us_on)
+            self.fmsg_out('msg have not command')
+            logging.info('Not command')
+            return(False)
 
-                if (self.msg_in['cmd'] == 'get_user'):
-                    self.get_user_on()
+    def read_msg(self, msg):
+        if self.check_msg(msg):
 
-                elif (self.msg_in['cmd'] == 'send_msg'):
-                    self.send_msg()
+            if (self.msg_in['cmd'] == 'auth'):
+                self.auth()
 
-                elif (self.msg_in['cmd'] == 'quit'):
-                    self.us_quit(self.ws)
+            elif (self.msg_in['cmd'] == 'get_user'):
+                self.get_user_on()
 
-                elif (self.msg_in['cmd'] == 'get_message'):
-                    print ("get_message")
-                elif (self.msg_in['cmd'] == 'get_fr'):
+            elif (self.msg_in['cmd'] == 'send_msg'):
+                self.send_msg()
+
+            elif (self.msg_in['cmd'] == 'quit'):
+                self.us_quit(self.ws)
+
+            elif (self.msg_in['cmd'] == 'get_msg'):
+                pass
+
+            elif (self.msg_in['cmd'] == 'get_fr'):
                     self.get_fr()
-
-                elif (self. msg_in['cmd'] == 'message'):
-                    print(msg_in['msg'])
-            else:
-                print('User not online')
 
     def get_fr(self):
         friends = self.m_sql.sql_get_fr(self.us_on[self.ws])
@@ -71,6 +71,10 @@ class Msg_worker():
         return (set(user) & set_user)
 
     def auth (self):
+        if (self.msg_in['loging'] in self.us_on_rev):
+            fmsg_out('User already online.')
+            return
+
         if (self.m_sql.sql_auth(self.msg_in)):
             answ = True
 

@@ -8,7 +8,7 @@ class Sql_worker():
 
         self.conn = sqlite3.connect(self.file_name())
         self.cursor = self.conn.cursor()
-        print ('DB is open')
+        print('DB is open')
 
     def app_dir(self):
         return (os.path.dirname(os.path.realpath(__file__)))
@@ -35,40 +35,28 @@ class Sql_worker():
         self.conn.commit()
 
     def sql_us_on_del(self, ide):
-        sql = "DELETE FROM users_on WHERE ident=?"
-        for i in ide:
-            self.conn.execute(sql, [i])
-            self.conn.commit()
-
+        pass
 
     def sql_regis(self, msg):
-
         sql = 'SELECT EXISTS(SELECT * FROM users WHERE login=? LIMIT 1)'
 
         self.cursor.execute(sql, [msg['login']])
         temp = self.cursor.fetchall()
         if ((temp[0][0]) == 0):
             sql = 'INSERT INTO users (nick, login, pasw) values (?,?,?)'
-            self.conn.execute(sql, [msg['nick'], msg['login'], msg['pasw']])
+            self.conn.execute(Sql, [msg['nick'], msg['login'], msg['pasw']])
             self.conn.commit()
-            self.add_table_user(msg)
             return(True)
         else:
             return(False)
 
-    def add_table_user(self, msg):
-        table_name = (msg['login'] + '_friends')
-        sql = 'CREATE TABLE {} (name text)'.format(table_name)
-
+    def sql_add_friends(self, msg):
+        pass
         self.cursor.execute(sql)
         self.conn.commit()
 
     def sql_get_fr(self, log):
-        table = log + '_friends'
-        sql = 'SELECT login FROM {}'.format(table)
-        self.cursor.execute(sql)
-        temp =(self.cursor.fetchall())
-        return (self.format_user(temp))
+        pass
 
     def format_user(self, user):
         return (list(x[0] for x in user))

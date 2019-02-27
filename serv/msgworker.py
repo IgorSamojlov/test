@@ -3,19 +3,22 @@ from json import dumps
 from json import loads
 
 from db import msq
+from serv import myusers
 
-#logging.basicConfig(filename='logg.log', level=logging.INFO)
+logging.basicConfig(filename='logg.log', level=logging.INFO)
 
-class Msg_worker():
+class MsgWorker:
+    my_sql_worker = msq.SqlWorker()
+
+    serv_users = myusers.MyUser()
+    msg_in = None
+    msg_out = None
+    ws = None
+    ws_other = None
+    msg_other = None
+
     def __init__(self):
-        self.m_sql = msq.Sql_worker()
-        self.us_on = {}
-        self.us_on_rev = {}
-        self.msg_in = None
-        self.msg_out = None
-        self.ws = None
-        self.ws_other = None
-        self.msg_other = None
+        pass
 
     def clear_other_msg(self):
         self.ws_other = None
@@ -65,7 +68,6 @@ class Msg_worker():
         self.fmsg_out({'cmd':'get_fr', 'friends':friends,
                         'fr_on':'ss', 'friends_on':list(friends_on)})
 
-
     def get_fr_on(self, user):
         set_user = set(self.us_on_rev.keys())
         return (set(user) & set_user)
@@ -77,16 +79,14 @@ class Msg_worker():
 
         if (self.m_sql.sql_auth(self.msg_in)):
             answ = True
-
-            self.us_on[self.ws] = self.msg_in['login']
-            self.us_on_rev[self.msg_in['login']] = self.ws
+            self.serv_users.add_user(self.msg_in['login'], self.ws)
             self.m_sql.sql_us_on(self.msg_in, str(self.ws.remote_address))
         else:
             answ = False
         self.fmsg_out({'cmd': 'auth', 'nick':'n', 'answer':answ})
 
     def send_msg(self):
-        if (self.msg_in['adr'] in self.us_on_rev) and (
+        if (self.serv_users.check_by_name(self.msg_in['adr'])) and (
             self.us_on_rev[self.msg_in['adr']].open):
             print ('Send message: ')
             temp = {'cmd': 'msg',

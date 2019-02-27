@@ -1,40 +1,43 @@
 import logging
 
-logging.basicConfig(filename='log_user.log', level=logging.INFO)
+class MyUser:
+    user_ws = {}
+    user_login = {}
 
-class MyUser():
     def __init__(self, max_user=3):
         self.max_user = max_user
-        self.user_ws = {}
-        self.user_log = {}
 
     def add_user(self, name, ws):
-        if (name in self.user_log):
-            if (len(self.user_log[name]) < self.max_user):
-                self.user_log[name].append(ws)
-                logging.info(self.user_log)
+        if (name in self.user_login):
+            if (len(self.user_login[name]) < self.max_user):
+                self.user_login[name].append(ws)
                 return(True)
             else:
                 return(False)
         else:
-            self.user_log[name] = [ws]
-            logging.info(self.user_log)
+            self.user_login[name] = [ws]
             return(True)
 
     def get_user_ws(self, name):
-        if name in self.user_log:
-            return(self.user_log[name])
+        if name in self.user_login:
+            return(self.user_login[name])
         else:
             return(None)
 
-    def get_user_log(self, ws):
+    def get_user_login(self, ws):
         if ws in self.user_ws:
             return(user[name])
         else:
             return(None)
 
-    def del_user_by_name(self, name):
+    def check_by_name():
         pass
 
-    def del_user_by_websocket(self, ws):
+    def check_by_ws():
         pass
+
+    def del_user_by_name(self, name):
+        self.user_login.pop(name)
+
+    def del_user_by_websocket(self, ws):
+        self.user_ws.pop(ws)

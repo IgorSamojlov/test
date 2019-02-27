@@ -1,14 +1,14 @@
+import logging
 import sqlite3
 import uuid
 import sys
 import os
 
-class Sql_worker():
+class SqlWorker:
     def __init__(self):
 
         self.conn = sqlite3.connect(self.file_name())
         self.cursor = self.conn.cursor()
-        print('DB is open')
 
     def app_dir(self):
         return (os.path.dirname(os.path.realpath(__file__)))
@@ -77,13 +77,9 @@ class Sql_worker():
 
         self.cursor.execute(sql, [msg['login']])
         self.conn.commit()
-        print (temp)
 
     def get_table_name(self, msg):
         return(msg['from'] + '_' + msg['adr'] + '_' + 'messages')
 
     def __del__(self):
-        print ('Sql del')
         self.conn.close()
-
-

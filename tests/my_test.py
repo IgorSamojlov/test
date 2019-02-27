@@ -6,24 +6,18 @@ from json import loads
 from tests import mws
 from serv import myusers
 
-s = msgworker.Msg_worker()
-sq = msq.Sql_worker()
-mu = myusers.MyUser(3)
-ws = mws.Ws()
-ws.open = 'saas'
+server_worker = msgworker.MsgWorker()
+sql_worker = msq.SqlWorker()
+my_user = myusers.MyUser(3)
 
-class Test_serv(object):
+class Test_Serv(object):
 
     def setup(self):
-
-        s.us_on = {'11111':'Ann', '22222':'Igor'}
-        s.us_on_rev = {'Ann':'11111', 'Igor':'22222'}
-
+        pass
     def setup_method(self):
         pass
     def test_regis(self):
         pass
-
     def test_get_fr(self):
         pass
     def test_add_message(self):
@@ -31,8 +25,8 @@ class Test_serv(object):
     def test_check_msg(self):
         pass
     def test_user(self):
-        for i in range(0, 4):
+        for i in range(0, 3):
             ws = 'ws_' + str(i)
-            assert mu.add_user('Kolya', ws) == True
-
+            assert my_user.add_user('Kolya', ws) == True
+            assert my_user.del_user_by_name('Kolya') == None
 

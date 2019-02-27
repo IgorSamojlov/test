@@ -2,7 +2,7 @@ import json
 from serv import msgworker
 import asyncio
 
-msg_serv = msgworker.Msg_worker()
+msg_serv = msgworker.MsgWorker()
 
 async def run(websocket, path):
 
